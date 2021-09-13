@@ -1,0 +1,147 @@
+def display_board(board_position):
+  print('\n')
+  print(board_position[6] + ' | ' + board_position[7] + ' | ' + board_position[8])
+  print('----------')
+  print(board_position[3] + ' | ' + board_position[4] + ' | ' + board_position[5])
+  print('----------')
+  print(board_position[0] + ' | ' + board_position[1] + ' | ' + board_position[2])
+  print('\n')
+
+def ask_p1_input(board):
+  i1 = 0
+  taken = False
+  input_valid_1 = False
+  while input_valid_1 is False or taken is True:
+    if i1 > 0:
+      print('Invalid input!')
+    player1 = input('Player 1, choose your mark (1~9): ')
+    i1 += 1
+    if player1.isdigit():
+      player1 = int(player1)
+      input_valid_1 = True
+      if board[player1-1].isdigit():
+        return player1
+      else:
+        print('That spot is marked already.')
+        taken = True      
+
+def ask_p2_input(board):
+  i2 = 0
+  taken = False
+  input_valid_2 = False
+  while input_valid_2 is False or taken is True:
+    if i2 > 0:
+      print('Invalid input!')
+    player2 = input('Player 2, choose your mark (1~9): ')
+    i2 += 1
+    if player2.isdigit():
+      player2 = int(player2)
+      input_valid_2 = True
+      if board[player2-1].isdigit():
+        return player2
+      else:
+        print('That spot is marked already.')
+        taken = True
+
+def update_board(player1, player2, board, p1_symbol, p2_symbol):
+  board[player1-1] = p1_symbol 
+  board[player2-1] = p2_symbol
+  return board
+
+def choose_symbol():
+  i1 = 0
+  input_valid_1 = False
+  while input_valid_1 is False:
+    if i1 > 0:
+      print('Invalid selection!')
+    p1_symbol = input('Player 1, select X or O: ').upper()
+    i1 += 1
+    if p1_symbol == "X" :
+      input_valid_1 = True
+      p2_symbol = "O"
+    if p1_symbol == "O":
+      input_valid_1 = True
+      p2_symbol = "X"
+  return p1_symbol, p2_symbol
+
+def check_win(board):
+  available_space = []
+  for x in board:
+    if x.isdigit():
+      available_space.append(x)
+  if len(available_space) == 0:
+    return 'TIE'
+  for i in range(0,3):
+    if board[i] == board[i+3] == board[i+6]:
+      return board[i]
+  for i in range(0,7,3):
+    if board[i] == board[i+1] == board[i+2]:
+      return board[i]
+  if board[0] == board[4] == board[8] or board[2] == board[4] == board[6]:
+      return board[4]
+  return ''
+
+
+start_game = False
+end_game = False
+replay_game = False
+winner = ''
+board = ['1','2','3','4','5','6','7','8','9']
+while start_game is False:
+  answer = input("Ready to play Tic-Tac-Toe (Y/N)? ").upper()
+  if answer == "Y":
+    p1_symbol, p2_symbol = choose_symbol()
+    display_board(board)
+    player1_input = ask_p1_input(board)
+    board[player1_input-1] = p1_symbol
+    display_board(board)
+    player2_input = ask_p2_input(board)
+    start_game = True
+    latest_board = update_board(player1_input, player2_input, board, p1_symbol, p2_symbol)
+  if answer == "N":
+    print("No game no life, dude!")
+
+while start_game is True and end_game is False:
+  display_board(latest_board)
+  player1_input = ask_p1_input(latest_board)
+  latest_board = update_board(player1_input, player2_input, latest_board, p1_symbol, p2_symbol)
+  winner = check_win(latest_board)
+  if winner == 'O' and p1_symbol == "O":
+    print('\nYay! Player 1 won!')
+    end_game = True
+  elif winner == 'O' and p2_symbol == "O":
+    print('\nYay! Player 2 won!')
+    end_game = True
+  elif winner == 'X' and p1_symbol == "X":
+    print('\nYay! Player 1 won!')
+    end_game = True
+  elif winner == 'X' and p2_symbol == "X":
+    print('\nYay! Player 2 won!')
+    end_game = True
+  elif winner == 'TIE':
+    print("\nIt's a tie!")
+    end_game = True
+  else:
+    end_game = False
+  if end_game is False:
+    display_board(latest_board)
+    player2_input = ask_p2_input(latest_board)
+    latest_board = update_board(player1_input, player2_input, latest_board, p1_symbol, p2_symbol)
+    winner = check_win(latest_board)
+    if winner == 'O' and p1_symbol == "O":
+      print('\nYay! Player 1 won!')
+      end_game = True
+    elif winner == 'O' and p2_symbol == "O":
+      print('\nYay! Player 2 won!')
+      end_game = True
+    elif winner == 'X' and p1_symbol == "X":
+      print('\nYay! Player 1 won!')
+      end_game = True
+    elif winner == 'X' and p2_symbol == "X":
+      print('\nYay! Player 2 won!')
+      end_game = True
+    elif winner == 'TIE':
+      print("\nIt's a tie!")
+      end_game = True
+    else:
+      end_game = False
