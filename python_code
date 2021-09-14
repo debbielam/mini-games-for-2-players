@@ -15,8 +15,9 @@ def ask_p1_input(board):
     if i1 > 0:
       print('Invalid input!')
     player1 = input('Player 1, choose your mark (1~9): ')
-    i1 += 1
-    if player1.isdigit():
+    if not player1.isdigit():
+      i1 += 1
+    elif player1.isdigit():
       player1 = int(player1)
       input_valid_1 = True
       if board[player1-1].isdigit():
@@ -33,8 +34,9 @@ def ask_p2_input(board):
     if i2 > 0:
       print('Invalid input!')
     player2 = input('Player 2, choose your mark (1~9): ')
-    i2 += 1
-    if player2.isdigit():
+    if not player2.isdigit():
+      i2 += 1
+    elif player2.isdigit():
       player2 = int(player2)
       input_valid_2 = True
       if board[player2-1].isdigit():
@@ -81,67 +83,66 @@ def check_win(board):
       return board[4]
   return ''
 
-
-start_game = False
-end_game = False
-replay_game = False
-winner = ''
-board = ['1','2','3','4','5','6','7','8','9']
-while start_game is False:
-  answer = input("Ready to play Tic-Tac-Toe (Y/N)? ").upper()
-  if answer == "Y":
-    p1_symbol, p2_symbol = choose_symbol()
-    display_board(board)
-    player1_input = ask_p1_input(board)
-    board[player1_input-1] = p1_symbol
-    display_board(board)
-    player2_input = ask_p2_input(board)
-    start_game = True
-    latest_board = update_board(player1_input, player2_input, board, p1_symbol, p2_symbol)
-  if answer == "N":
-    print("No game no life, dude!")
-
-while start_game is True and end_game is False:
-  display_board(latest_board)
-  player1_input = ask_p1_input(latest_board)
-  latest_board = update_board(player1_input, player2_input, latest_board, p1_symbol, p2_symbol)
-  winner = check_win(latest_board)
+def check_win_player(win_tie,p1_symbol,p2_symbol):
   if winner == 'O' and p1_symbol == "O":
     print('\nYay! Player 1 won!')
-    end_game = True
+    return True
   elif winner == 'O' and p2_symbol == "O":
     print('\nYay! Player 2 won!')
-    end_game = True
+    return True
   elif winner == 'X' and p1_symbol == "X":
     print('\nYay! Player 1 won!')
-    end_game = True
+    return True
   elif winner == 'X' and p2_symbol == "X":
     print('\nYay! Player 2 won!')
-    end_game = True
+    return True
   elif winner == 'TIE':
     print("\nIt's a tie!")
-    end_game = True
+    return True
   else:
-    end_game = False
-  if end_game is False:
+    return False
+
+on_off = True
+
+while on_off is True:
+  start_game = False
+  end_game = False
+  winner = ''
+  board = ['1','2','3','4','5','6','7','8','9']
+
+  while start_game is False and end_game is False:
+    answer = input("Ready to play Tic-Tac-Toe (Y/N)? ").upper()
+    if answer == "Y":
+      p1_symbol, p2_symbol = choose_symbol()
+      display_board(board)
+      player1_input = ask_p1_input(board)
+      board[player1_input-1] = p1_symbol
+      display_board(board)
+      player2_input = ask_p2_input(board)
+      start_game = True
+      latest_board = update_board(player1_input, player2_input, board, p1_symbol, p2_symbol)
+    if answer == "N":
+      print("No game no life, dude!")
+
+  while start_game is True and end_game is False:
     display_board(latest_board)
-    player2_input = ask_p2_input(latest_board)
+    player1_input = ask_p1_input(latest_board)
     latest_board = update_board(player1_input, player2_input, latest_board, p1_symbol, p2_symbol)
     winner = check_win(latest_board)
-    if winner == 'O' and p1_symbol == "O":
-      print('\nYay! Player 1 won!')
-      end_game = True
-    elif winner == 'O' and p2_symbol == "O":
-      print('\nYay! Player 2 won!')
-      end_game = True
-    elif winner == 'X' and p1_symbol == "X":
-      print('\nYay! Player 1 won!')
-      end_game = True
-    elif winner == 'X' and p2_symbol == "X":
-      print('\nYay! Player 2 won!')
-      end_game = True
-    elif winner == 'TIE':
-      print("\nIt's a tie!")
-      end_game = True
-    else:
+    end_game = check_win_player(winner,p1_symbol,p2_symbol)
+    if end_game is False:
+      display_board(latest_board)
+      player2_input = ask_p2_input(latest_board)
+      latest_board = update_board(player1_input, player2_input, latest_board, p1_symbol, p2_symbol)
+      winner = check_win(latest_board)
+      end_game = check_win_player(winner,p1_symbol,p2_symbol)
+
+  if end_game is True:
+    display_board(latest_board)
+    replay_reply = input("Do you want to play again (Y/N)?").upper()
+    if replay_reply == "Y":
+      start_game = False
       end_game = False
+    else:
+      on_off = False
+      print("OK, goodbye!")
