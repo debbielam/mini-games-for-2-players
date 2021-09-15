@@ -71,8 +71,6 @@ def check_win(board):
   for x in board:
     if x.isdigit():
       available_space.append(x)
-  if len(available_space) == 0:
-    return 'TIE'
   for i in range(0,3):
     if board[i] == board[i+3] == board[i+6]:
       return board[i]
@@ -81,7 +79,8 @@ def check_win(board):
       return board[i]
   if board[0] == board[4] == board[8] or board[2] == board[4] == board[6]:
       return board[4]
-  return ''
+  if len(available_space) == 0:
+    return 'TIE'
 
 def check_win_player(win_tie,p1_symbol,p2_symbol):
   if winner == 'O' and p1_symbol == "O":
