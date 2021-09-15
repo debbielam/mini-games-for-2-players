@@ -1,0 +1,76 @@
+import game_class
+
+game_on = True
+registration = False
+p1 = p2 = ""
+round_no = 0
+
+while game_on:
+
+  while registration is False:
+    while p1.isdigit() and p2.isdigit():
+      p1 = game_class.Player(input("Player 1, enter your name: "))
+      p2 = game_class.Player(input("Player 2, enter your name: "))
+  
+    game_deck = game_class.Deck()
+    game_deck.shuffle()
+
+    p1_cards = []
+    p2_cards = []
+    for x in range(26):
+      p1_cards.append(game_deck.deal_one())
+      p2_cards.append(game_deck.deal_one())
+      
+    registration = True
+
+  at_war = False
+  round_no += 1
+  print(f"\nROUND {round_no}")
+  if len(p1.all_cards) == 0:
+    print("Game Over!")
+    print(f"\nPlayer {p1.name} ran out of cards.\nPlayer {p2.name} wins!")
+    game_on = False
+    break
+  
+  if len(p2.all_cards) == 0:
+    print("Game Over!")
+    print(f"\nPlayer {p2.name} ran out of cards.\nPlayer {p1.name} wins!")
+    game_on = False
+    break
+  
+  p1_war_cards = []
+  p2_war_cards = []
+  p1_war_cards.append(p1.remove_one())
+  p2_war_cards.append(p2.remove_one())
+
+  at_war = True
+  while at_war:
+
+    if p1_war_cards[-1].value > p2_war_cards[-1].value:
+      p1.add_cards(p1_war_cards)
+      p1.add_cards(p2_war_cards)
+      at_war = False
+
+    elif p2_war_cards[-1].value > p1_war_cards[-1].value:
+      p2.add_cards(p1_war_cards)
+      p2.add_cards(p2_war_cards)
+      at_war = False
+
+    else:
+
+      print("\nWAR!!!")
+      
+      if len(p1_war_cards) < 5:
+        print(f"\nPlayer {p1.name} unable to play war.\nPlayer {p2.name} wins!")
+        game_on = False
+        break
+
+      elif len(p2_war_cards) < 5:
+        print(f"\nPlayer {p2.name} unable to play war.\nPlayer {p1.name} wins!")
+        game_on = False
+        break
+
+      else:
+        for x in range(5):
+          p1_war_cards.append(p1.remove_one())
+          p2_war_cards.append(p2.remove_one())
