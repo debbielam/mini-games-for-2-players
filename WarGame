@@ -1,31 +1,80 @@
+import random
+
+suits = ["Diamonds","Clubs","Hearts","Spades"]
+ranks = ('Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Jack', 'Queen', 'King', 'Ace')
+values = {'Two':2, 'Three':3, 'Four':4, 'Five':5, 'Six':6, 'Seven':7, 'Eight':8, 'Nine':9, 'Ten':10, 'Jack':11, 'Queen':12, 'King':13, 'Ace':14}
+
+class Card:
+
+  def __init__(self, suit, rank):
+    self.suit = suit
+    self.rank = rank
+    self.value = values[rank]
+
+  def __str__(self):
+    return self.rank + ' of ' + self.suit
+
+class Deck:
+
+  def __init__(self):
+    self.deck = []
+    for suit in suits:
+      for rank in ranks:
+        self.deck.append(Card(suit, rank))
+    
+  def shuffle(self):
+    random.shuffle(self.deck)
+
+  def deal_one(self):
+    return self.deck.pop()
+
+class Player:
+
+  def __init__(self, name):
+    self.name = name
+    self.all_cards = []
+  
+  def remove_one(self):
+    return self.all_cards.pop(0)
+
+  def add_cards(self, new_cards):
+    if type(new_cards) == type([]):
+      self.all_cards.extend(new_cards)
+    else:
+      self.all_cards.append(new_cards)
+  
+  def __str__(self):
+    return f"Player {self.name} has {len(self.all_cards)} cards"
+    
+-----------------------ANOTHER .py FILE----------------------------
+
 import game_class
 
 game_on = True
 registration = False
-p1 = p2 = ""
 round_no = 0
 
 while game_on:
 
   while registration is False:
-    while p1.isdigit() and p2.isdigit():
-      p1 = game_class.Player(input("Player 1, enter your name: "))
-      p2 = game_class.Player(input("Player 2, enter your name: "))
+    p1_name = input("Player 1, enter your name: ")
+    p2_name = input("Player 2, enter your name: ")
+    p1 = game_class.Player(p1_name)
+    p2 = game_class.Player(p2_name)
   
     game_deck = game_class.Deck()
     game_deck.shuffle()
 
-    p1_cards = []
-    p2_cards = []
     for x in range(26):
-      p1_cards.append(game_deck.deal_one())
-      p2_cards.append(game_deck.deal_one())
+      p1.add_cards(game_deck.deal_one())
+      p2.add_cards(game_deck.deal_one())
       
     registration = True
 
-  at_war = False
   round_no += 1
   print(f"\nROUND {round_no}")
+  print(p1)
+  print(p2)
   if len(p1.all_cards) == 0:
     print("Game Over!")
     print(f"\nPlayer {p1.name} ran out of cards.\nPlayer {p2.name} wins!")
@@ -44,29 +93,34 @@ while game_on:
   p2_war_cards.append(p2.remove_one())
 
   at_war = True
+
   while at_war:
+    
+    print(f"Player {p1_name}, {p1_war_cards[-1]} VS Player {p2_name}, {p2_war_cards[-1]}")
 
     if p1_war_cards[-1].value > p2_war_cards[-1].value:
       p1.add_cards(p1_war_cards)
       p1.add_cards(p2_war_cards)
+      print(f"Player {p1_name} wins this round!")
       at_war = False
 
     elif p2_war_cards[-1].value > p1_war_cards[-1].value:
       p2.add_cards(p1_war_cards)
       p2.add_cards(p2_war_cards)
+      print(f"Player {p2_name} wins this round!")
       at_war = False
 
     else:
 
       print("\nWAR!!!")
       
-      if len(p1_war_cards) < 5:
-        print(f"\nPlayer {p1.name} unable to play war.\nPlayer {p2.name} wins!")
+      if len(p1.all_cards) < 5:
+        print(f"\nPlayer {p1.name} unable to play war.\nPlayer {p2.name} wins the game!")
         game_on = False
         break
 
-      elif len(p2_war_cards) < 5:
-        print(f"\nPlayer {p2.name} unable to play war.\nPlayer {p1.name} wins!")
+      elif len(p2.all_cards) < 5:
+        print(f"\nPlayer {p2.name} unable to play war.\nPlayer {p1.name} wins the game!")
         game_on = False
         break
 
